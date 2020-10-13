@@ -6,8 +6,9 @@ class PhonemeConverter():
         #sentence = ''
         pass
 
-    def convert(self, sentence: str):
+    def process(self, sentence: str):
         sentence = self.double_letters(sentence)
+        sentence = self.l_assimilation(sentence)
         return(sentence)
 
     def double_letters(self, sentence: str):
@@ -17,9 +18,35 @@ class PhonemeConverter():
                        ('mm','M'),('nn','N'),('pp','P'),('rr','R'),('ss','S'),('tt','T'),('vv','V'),('zz','Z')]
         for old, new in double_long + double + single_long:
             sentence = sentence.replace(old, new)
-
         return(sentence)
 
+    def l_assimilation(self, sentence: str):
+        sentence = re.sub(r'[lL][|§#~]?r', r'R', sentence)
+        return(sentence)
+
+    def nasalisation(self, sentence: str):
+        sentence = re.sub(r'(n)([|~§#]?[pbfv])',r'm\g<2>',sentence)
+        sentence = re.sub(r'(n)([|~§#]?[ǧť])',r'ɲ\g<2>',sentence)
+        sentence = re.sub(r'(n)([|~§#]?ɲ)',r'Ɲ',sentence)
+        return(sentence)
+
+    def n_assimilation(self, sentence: str):
+        sentence = re.sub(r'(n)([|~§]?l)',r'L',sentence)
+        sentence = re.sub(r'(n)([|~§]?r)',r'R',sentence)
+        return(sentence)
+
+    def sibilant_assimilation(self, sentence: str):
+        sentence = re.sub(r'(t)([|~§#]?ʃ)',r'C',sentence)
+        #sentence = re.sub(r'(d)([|~§]?z)',r'R',sentence) is 'dz' long or not in every situation?
+        sentence = re.sub(r'(t)([|~§#]?s)',r'Č',sentence)
+        sentence = re.sub(r'(t)([|~§# ]?c)',r'C',sentence)
+        sentence = re.sub(r'(t)([|~§# ]?č)',r'Č',sentence)
+        sentence = re.sub(r'(d)([|~§#]?ʃ)',r'C',sentence)
+        sentence = re.sub(r'(d)([|~t]?d)',r'Č',sentence)
+        return(sentence)
+
+    def voice_assimilation(self, sentence: str):
+        voiced = 'bd'
 
 
 
