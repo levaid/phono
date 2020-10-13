@@ -16,9 +16,9 @@ with gzip.open('testfile.txt.gz','rt') as f:
 
 
 from processing.converter import PhonemeConverter
-peldak = 'balra, modellre, széngyűrű, szén|pénz, verssel, kardja, hangya, ajánlat, tanrész, döfj, fúrj, szívből, hatvan, pechből, adhat, metszet, jutsz, kétség, fűtsd, hat cica, kalapot cserél, ötödször, fáradtság'
+peldak = 'balra, modellre, széngyűrű, szén|pénz, verssel, kardja, hangya, ajánlat, tanrész, döfj, fúrj, szívből, hatvan, pechből, adhat, metszet, jutsz, kétség, fűtsd, hat cica, kalapot cserél, ötödször, fáradtság, dobtam, képzés, adhat, hétből, edzhet, ketrecben, fogtam, zsákból, ágytól, pintyből, szívtam, széfben, méztől, mészből, rúzstól, hasba, hatvan'
 peldak = conv.double_letters(peldak)
-print(conv.sibilant_assimilation(peldak))
+print(conv.voice_assimilation(peldak))
 
 
 

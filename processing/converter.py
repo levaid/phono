@@ -46,7 +46,20 @@ class PhonemeConverter():
         return(sentence)
 
     def voice_assimilation(self, sentence: str):
-        voiced = 'bd'
+        voiced = 'bdǧgzžď'
+        voiceless = 'ptťkʃscf'
+        pairs = {'p':'b','b':'p','t':'d','d':'t','ť':'ǧ','ǧ':'ť','k':'g','g':'k','f':'v','v':'f','ʃ':'z','z':'ʃ','s':'ž','ž':'s','c':'ď','ď':'c'} #cs/dzs
+        for letter in voiced + 'v':
+            pattern = letter + r'([|~§#]?' + f'[{voiceless}h])' #HACK h
+            sub = pairs[letter] + r'\g<1>'
+            sentence = re.sub(pattern,sub,sentence)
+
+        for letter in voiceless:
+            pattern = letter + r'([|~§#]?' + f'[{voiced}])'
+            sub = pairs[letter] + r'\g<1>'
+            sentence = re.sub(pattern,sub,sentence)
+
+        return(sentence)
 
 
 
