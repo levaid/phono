@@ -8,32 +8,42 @@ class PhonemeConverter():
 
     def process(self, sentence: str):
         sentence = self.double_letters(sentence)
+        sentence = self.degemination(sentence)
         sentence = self.l_assimilation(sentence)
+        sentence = self.n_assimilation(sentence)
+        sentence = self.nasalisation(sentence)
+        sentence = self.palatal_assimilation(sentence)
+        sentence = self.sibilant_assimilation(sentence)
+        sentence = self.voice_assimilation(sentence)
         return(sentence)
 
     def double_letters(self, sentence: str):
-        double_long = [('ccs','\u010c'),('ddz','\u010e'),('ggy','\u01e6'),('lly','J'),('nny','\u019d'),('ssz','\u01a9'),('tty','\u0164'),('zzs','\u017d')]
-        double = [('cs','\u010d'),('dz','\u010f'),('gy','\u01e7'),('ly','j'),('ny','\u0272'),('sz','\u0283'),('ty','\u0165'),('zs','\u017e')]
+        double_long = [('ccs','Č'),('ddz','Ď'),('ggy','Ǧ'),('lly','J'),('nny','Ɲ'),('ssz','Ʃ'),('tty','Ť'),('zzs','Ž')]
+        double = [('cs','č'),('dz','ď'),('gy','ǧ'),('ly','j'),('ny','ɲ'),('sz','ʃ'),('ty','ť'),('zs','ž')]
         single_long = [('bb','B'),('cc','C'),('dd','D'),('ff','F'),('gg','G'),('hh','H'),('jj','J'),('kk','K'),('ll','L'),
                        ('mm','M'),('nn','N'),('pp','P'),('rr','R'),('ss','S'),('tt','T'),('vv','V'),('zz','Z')]
         for old, new in double_long + double + single_long:
             sentence = sentence.replace(old, new)
         return(sentence)
 
+
+
     def l_assimilation(self, sentence: str):
         sentence = re.sub(r'[lL][|§#~]?r', r'R', sentence)
-        return(sentence)
+        return(self.double_letters(sentence))
 
     def nasalisation(self, sentence: str):
         sentence = re.sub(r'(n)([|~§#]?[pbfv])',r'm\g<2>',sentence)
         sentence = re.sub(r'(n)([|~§#]?[ǧť])',r'ɲ\g<2>',sentence)
         sentence = re.sub(r'(n)([|~§#]?ɲ)',r'Ɲ',sentence)
-        return(sentence)
+        return(self.double_letters(sentence))
+
 
     def n_assimilation(self, sentence: str):
         sentence = re.sub(r'(n)([|~§]?l)',r'L',sentence)
         sentence = re.sub(r'(n)([|~§]?r)',r'R',sentence)
-        return(sentence)
+        return(self.double_letters(sentence))
+
 
     def sibilant_assimilation(self, sentence: str):
         sentence = re.sub(r'(t)([|~§#]?ʃ)',r'C',sentence)
@@ -42,8 +52,9 @@ class PhonemeConverter():
         sentence = re.sub(r'(t)([|~§# ]?c)',r'C',sentence)
         sentence = re.sub(r'(t)([|~§# ]?č)',r'Č',sentence)
         sentence = re.sub(r'(d)([|~§#]?ʃ)',r'C',sentence)
-        sentence = re.sub(r'(d)([|~t]?d)',r'Č',sentence)
-        return(sentence)
+        sentence = re.sub(r'(d)([|~§#]?s)',r'Č',sentence)
+        return(self.double_letters(sentence))
+
 
     def voice_assimilation(self, sentence: str):
         voiced = 'bdǧgzžď'
@@ -59,7 +70,52 @@ class PhonemeConverter():
             sub = pairs[letter] + r'\g<1>'
             sentence = re.sub(pattern,sub,sentence)
 
-        return(sentence)
+        return(self.double_letters(sentence))
+
+    def palatal_assimilation(self, sentence: str):
+        full = [('ǧ','j','Ǧ'),('d','j','Ǧ'),('l','j','J'),('n','j','Ɲ'),('ɲ','j','Ɲ'),('t','j','Ť'),('ť','j','Ť')]
+        partial = [('d','ǧ','Ǧ'),('t','ǧ','Ǧ'),('d','ť','Ť'),('t','ť','Ť')]
+        optional = [('d','ɲ','ǧɲ'),('t','ɲ','ťɲ')]
+
+        for first,second,replace in full:
+            sentence = re.sub(f'{first}([|~§#]?{second})',replace,sentence)
+
+        for first,second,replace in partial+optional:
+            sentence = re.sub(f'{first}([|~§# ]?{second})',replace,sentence)
+
+        return(self.double_letters(sentence))
+
+
+
+    def  degemination(self, sentence: str):
+        consonants = 'bcdfghjklmnpqrstvwxzčďǧɲʃťž'
+        long_consonants = 'BCDFGHJKLMNPQRSTVWXZČĎǦƝƩŤŽ'
+        liquid = 'jlr'
+        nasal = 'mnɲ'
+        obstruents = 'bcdfghkpqstvwxzčďǧʃťž'
+        for cons in long_consonants: #192B
+            sentence = re.sub(f'{cons}[|§~# ]?([{consonants}])',cons.lower()+r'\g<1>',sentence)
+        
+        for cons in consonants: #192C
+            sentence = re.sub(f'([{consonants}]{cons})[|#§~ ]{cons}',r'\g<1>',sentence)
+
+        for cons in long_consonants:
+            sentence = re.sub(f'([{consonants}]){cons}',r'\g<1>'+cons.lower(),sentence)
+
+        for cons in consonants: #192D
+            sentence = re.sub(f'{cons}[|~#§ ]({cons}[{obstruents}])',r'\g<1>',sentence)
+
+        for cons in long_consonants:
+            sentence = re.sub(f'{cons}([{obstruents}])',cons.lower()+r'\g<1>',sentence)
+
+        for cons in consonants: #optional
+            sentence = re.sub(f'{cons}[|~#§ ]({cons}[{nasal}])',r'\g<1>',sentence)
+
+        for cons in long_consonants:
+            sentence = re.sub(f'{cons}([{nasal}])',cons.lower()+r'\g<1>',sentence)
+
+        return(self.double_letters(sentence))
+
 
 
 
