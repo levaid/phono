@@ -23,7 +23,8 @@ peldak = 'balra, modellre, széngyűrű, szén|pénz, verssel, kardja, hangya, a
              ' hallva, vers|sel'
 peldak = conv.double_letters(peldak)
 peldak = conv.process(peldak)
-print(conv.process(peldak))
+peldak = conv.process(peldak)
+print(conv.ipaization(peldak))
 
 
 
