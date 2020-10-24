@@ -136,7 +136,7 @@ class PhonemeConverter():
         ipa_sentence = ''
         ipa = {'a':'ɒ', 'á':'aː', 'b':'b', 'c':'t͡s', 'č':'t͡ʃ', 'd':'d', 'ď':'d͡z', 'e':'ɛ', 'é':'eː', 'f':'f', 'g':'ɡ', 'ǧ':'ɟ', 'h':'h', 'i':'i', 'í':'iː', 'j':'j', 'k':'k', 'l':'l', 'ly':'j', 'm':'m', 'n':'n', 'ɲ':'ɲ', 'o':'o', 'ó':'oː', 'ö':'ø', 'ő':'øː', 'p':'p', 'q':'k', 'r':'r', 's':'ʃ', 'ʃ':'s', 't':'t', 'ť':'c', 'u':'u', 'ú':'uː', 'ü':'y', 'ű':'yː', 'v':'v', 'w':'v', 'x':'ks', 'y':'i', 'z':'z', 'ž':'ʒ', 'B':'bː', 'C':'t͡sː', 'Č':'t͡ʃː', 'D':'dː', 'Ď':'d͡zː', 'F':'fː', 'G':'ɡː', 'Ǧ':'ɟː', 'H':'hː', 'J':'jː', 'K':'kː', 'L':'lː', 'ly':'j', 'M':'mː', 'N':'nː', 'Ɲ':'ɲː', 'P':'pː', 'Q':'kː', 'R':'rː', 'S':'ʃː', 'Ʃ':'sː', 'T':'tː', 'Ť':'cː', 'V':'vː', 'W':'vː', 'X':'ksː', 'Z':'zː', 'Ž':'ʒː' }
         #'dzs':'d͡ʒ',
-        sentence = self.double_letters(re.sub(r'[|~§#', '', sentence))
+        sentence = self.double_letters(re.sub(r'[|~§#]', '', sentence))
         for letter in sentence:
             ipa_sentence += ipa.get(letter, letter)
 
