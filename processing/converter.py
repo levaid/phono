@@ -85,6 +85,12 @@ class PhonemeConverter():
 
         return(self.double_letters(sentence))
 
+    def hiatus_filling(self, sentence: str):
+        vowels = 'aáeéoóöőüűuú'
+        sentence = re.sub(f'i[|~§]?([{vowels}])',r'ij\g<1>',sentence)
+        sentence = re.sub(f'([{vowels}])i[|~§]?',r'\g<1>ji',sentence)
+        return(sentence)
+
 
 
     def  degemination(self, sentence: str):
