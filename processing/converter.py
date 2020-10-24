@@ -15,7 +15,10 @@ class PhonemeConverter():
         sentence = self.palatal_assimilation(sentence)
         sentence = self.sibilant_assimilation(sentence)
         sentence = self.voice_assimilation(sentence)
+        sentence = self.hiatus_filling(sentence)
+        sentence = self.n_nasalization(sentence)
         return(sentence)
+
 
     def double_letters(self, sentence: str):
         double_long = [('ccs','Č'),('ddz','Ď'),('ggy','Ǧ'),('lly','J'),('nny','Ɲ'),('ssz','Ʃ'),('tty','Ť'),('zzs','Ž')]
@@ -27,10 +30,10 @@ class PhonemeConverter():
         return(sentence)
 
 
-
     def l_assimilation(self, sentence: str):
         sentence = re.sub(r'[lL][|§#~]?r', r'R', sentence)
         return(self.double_letters(sentence))
+
 
     def nasalisation(self, sentence: str):
         sentence = re.sub(r'(n)([|~§#]?[pbfv])',r'm\g<2>',sentence)
@@ -72,6 +75,7 @@ class PhonemeConverter():
 
         return(self.double_letters(sentence))
 
+
     def palatal_assimilation(self, sentence: str):
         full = [('ǧ','j','Ǧ'),('d','j','Ǧ'),('l','j','J'),('n','j','Ɲ'),('ɲ','j','Ɲ'),('t','j','Ť'),('ť','j','Ť')]
         partial = [('d','ǧ','Ǧ'),('t','ǧ','Ǧ'),('d','ť','Ť'),('t','ť','Ť')]
@@ -85,12 +89,17 @@ class PhonemeConverter():
 
         return(self.double_letters(sentence))
 
+
     def hiatus_filling(self, sentence: str):
         vowels = 'aáeéoóöőüűuú'
         sentence = re.sub(f'i[|~§]?([{vowels}])',r'ij\g<1>',sentence)
         sentence = re.sub(f'([{vowels}])i[|~§]?',r'\g<1>ji',sentence)
         return(sentence)
 
+    
+    def n_nasalization(self, sentence: str):
+        sentence = re.sub(r'n[|~§#]?([gk])',r'ŋ\g<1>',sentence)
+        return(self.double_letters(sentence))
 
 
     def  degemination(self, sentence: str):
@@ -121,6 +130,7 @@ class PhonemeConverter():
             sentence = re.sub(f'{cons}([{nasal}])',cons.lower()+r'\g<1>',sentence)
 
         return(self.double_letters(sentence))
+
 
     def ipaization(sefl, sentence: str):
         ipa_sentence = ''
