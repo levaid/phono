@@ -7,80 +7,19 @@ from itertools import islice
 sentences = []
 conv = PhonemeConverter()
 
-@profile
-def process(converter: PhonemeConverter, sentence: str):
-    sentence = converter.double_letters(sentence)
-    sentence = converter.fast_double_letters(sentence)
-
-    sentence = converter.degemination(sentence)
-    sentence = converter.fast_degemination(sentence)
-
-    sentence = converter.n_assimilation(sentence)
-    sentence = converter.fast_n_assimilation(sentence)
-
-    sentence = converter.palatal_assimilation(sentence)
-    sentence = converter.fast_palatal_assimilation(sentence)
-
-    sentence = converter.sibilant_assimilation(sentence)
-    sentence = converter.fast_sibilant_assimilation(sentence)
-
-    sentence = converter.voice_assimilation(sentence)
-    sentence = converter.fast_voice_assimilation(sentence)
-
-    sentence = converter.nasalisation(sentence)
-    sentence = converter.fast_nasalisation(sentence)
-
-    sentence = converter.hiatus_filling(sentence)
-    sentence = converter.n_nasalization(sentence)
-    sentence = converter.l_assimilation(sentence)
-
-    return(sentence)
-
-@profile
-def fast_process(converter: PhonemeConverter, sentence: str):
-
-    sentence = converter.fast_double_letters(sentence)
-    sentence = converter.fast_degemination(sentence)
-    sentence = converter.fast_n_assimilation(sentence)
-    sentence = converter.fast_palatal_assimilation(sentence)
-    sentence = converter.fast_sibilant_assimilation(sentence)
-    sentence = converter.fast_voice_assimilation(sentence)
-    sentence = converter.fast_nasalisation(sentence)
-
-    sentence = converter.hiatus_filling(sentence)
-    sentence = converter.n_nasalization(sentence)
-    sentence = converter.l_assimilation(sentence)
-
-    return(sentence)
-
-@profile
-def slow_process(converter: PhonemeConverter, sentence: str):
-
-    sentence = converter.double_letters(sentence)
-    sentence = converter.degemination(sentence)
-    sentence = converter.n_assimilation(sentence)
-    sentence = converter.palatal_assimilation(sentence)
-    sentence = converter.sibilant_assimilation(sentence)
-    sentence = converter.voice_assimilation(sentence)
-    sentence = converter.nasalisation(sentence)
-
-    sentence = converter.hiatus_filling(sentence)
-    sentence = converter.n_nasalization(sentence)
-    sentence = converter.l_assimilation(sentence)
-
-    return(sentence)
 
 sentences = []
 batchsize = 1000
-limit = 100000 // batchsize
-with gzip.open('testfile.txt.gz','rt') as f:
+limit = 10000 // batchsize
+with gzip.open('testfile.txt.gz','rt') as f, open('dif1file.txt','w') as outfile1, open('dif2file.txt','w') as outfile2:
     i = 0
     while True:
         batch = ''.join((islice(f, batchsize)))
         if i < limit:
-            process(conv, batch)
-            fast_process(conv, batch)
-            slow_process(conv, batch)
+            #outfile.write(batch)
+            #outfile.write(conv.process(batch))
+            outfile1.write(conv.fast_process(batch))
+            outfile2.write(conv.slow_process(batch))
             i += 1
         if not batch or i >= limit:
             break
@@ -95,8 +34,8 @@ peldak = 'balra, modellre, széngyűrű, szén|pénz, verssel, kardja, hangya, a
              ' hallva, vers|sel, '
 
 peldak += 'jobbra, pattra, gallyra, has|sba, szebbnél'
-peldak = conv.double_letters(peldak)
-print(peldak)
+peldak = conv.fast_double_letters(peldak)
+#print(peldak)
 
 
 consonants = 'bcdfghjklmnpqrstvwxzčďǧɲʃťž'
@@ -107,17 +46,11 @@ obstruents = 'bcdfghkpqstvwxzčďǧʃťž'
 
 # print(peldak)
 peldak_orig = conv.degemination(peldak)
-print('orig______', peldak_orig)
+#print('orig______', peldak_orig)
 
 peldak_fast = conv.fast_degemination(peldak)
-print('fast______', peldak_fast)
+#print('fast______', peldak_fast)
 # HACK although I hope it works fast AF
-
-
-
-
-
-
 
 
 
