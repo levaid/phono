@@ -8,6 +8,7 @@ class PhonemeConverter():
 
 
     def process_orig(self, sentence: str):
+        sentence = self.x_letter(sentence)
         sentence = self.fast_double_letters(sentence)
         sentence = self.degemination(sentence)
         sentence = self.l_assimilation(sentence)
@@ -21,6 +22,8 @@ class PhonemeConverter():
         return(sentence)
 
     def process(self, sentence: str):
+
+        sentence = self.x_letter(sentence)
         sentence = self.fast_double_letters(sentence)
 
         sentence = self.degemination(sentence)
@@ -48,10 +51,11 @@ class PhonemeConverter():
         return(sentence)
 
     def fast_process(self, sentence: str):
-
+        sentence = self.x_letter(sentence)
         sentence = self.fast_double_letters(sentence)
         sentence = self.fast_degemination(sentence)
         sentence = self.fast_n_assimilation(sentence)
+        sentence = self.fast_m_nasalization(sentence)
         sentence = self.fast_palatal_assimilation(sentence)
         sentence = self.fast_sibilant_assimilation(sentence)
         sentence = self.fast_voice_assimilation(sentence)
@@ -66,15 +70,17 @@ class PhonemeConverter():
 
 
     def optimal_process(self, sentence: str):
-        
+        sentence = self.x_letter(sentence)
         sentence = self.fast_double_letters(sentence)
         sentence = self.fast_degemination(sentence)
         sentence = self.fast_n_assimilation(sentence)
         sentence = self.fast_palatal_assimilation(sentence)
+        sentence = self.fast_m_nasalization(sentence)
         sentence = self.fast_sibilant_assimilation(sentence)
         sentence = self.fast_voice_assimilation(sentence)
         sentence = self.fast_voice_assimilation(sentence)
         sentence = self.fast_nasalisation(sentence)
+
         sentence = self.fast_stronger_long_letters(sentence)
         sentence = self.hiatus_filling(sentence)
         sentence = self.n_nasalization(sentence)
@@ -95,6 +101,7 @@ class PhonemeConverter():
         sentence = self.fast_n_assimilation(sentence)
         sentence = self.fast_palatal_assimilation(sentence)
         sentence = self.fast_sibilant_assimilation(sentence)
+        sentence = self.fast_m_nasalization(sentence)
         sentence = self.fast_voice_assimilation(sentence)
         sentence = self.fast_voice_assimilation(sentence)
         sentence = self.fast_nasalisation(sentence)
@@ -116,6 +123,8 @@ class PhonemeConverter():
 
         return(self.fast_long_letters(sentence))
 
+    def x_letter(self, sentence: str):
+        return(sentence.replace('x','ksz').replace('X','ksz'))
 
     def fast_long_letters(self, sentence: str):
         sentence = re.sub(r'([bcdfghjklmnpqrstvxzčďǧɲʃťž])\1', lambda m: m.group(1).upper(), sentence) # HACK HACK HACK
@@ -141,6 +150,11 @@ class PhonemeConverter():
         sentence = re.sub(r'[lL][|§#~]?r', r'R', sentence)
         return(self.fast_double_letters(sentence))
 
+    def fast_h_transformation(self, sentence: str):
+        sentence = re.sub(r'([aáeéiíoóöőüűuú][|§#~ ]?)h([|§#~ ]?[aáeéiíoóöőüűuú])',r'\g<1>ɦ\g<2>',sentence) #tehén
+        sentence = re.sub(r'([aáeéiíoóöőüűuú][|§#~ ]?)H([|§#~ ]?[aáeéiíoóöőüűuú])',r'\g<1>Ḧ\g<2>',sentence) #ahhoz
+        sentence = re.sub(r'([aáeéiíoóöőüűuú][|§#~]?)c?h([|§#~]?[bcdfgjklmnpqrstvxzčďǧɲʃťž])',r'\g<1>ḧ\g<2>',sentence) ##pechből
+        return(self.fast_long_letters(sentence))
 
     def nasalisation(self, sentence: str):
         sentence = re.sub(r'(n)([|~§#]?[pbfv])',r'm\g<2>',sentence)
@@ -204,11 +218,11 @@ class PhonemeConverter():
     def fast_voice_assimilation(self, sentence: str):
         voiced = 'bdǧgzžď'
         voiceless = 'ptťkʃscf'
-        pairs = {'p':'b','b':'p','t':'d','d':'t','ť':'ǧ','ǧ':'ť','k':'g','g':'k','f':'v','v':'f','ʃ':'z','z':'ʃ','s':'ž','ž':'s','c':'ď','ď':'c'} #cs/dzs
+        pairs = {'p':'b','b':'p','t':'d','d':'t','ť':'ǧ','ǧ':'ť','k':'g','g':'k','f':'v','v':'f','ʃ':'z','z':'ʃ','s':'ž','ž':'s','c':'ď','ď':'c','h':'ɦ'} #cs/dzs
         
         sentence = re.sub(r'([bdǧgzžďv])([|~§#]?[ptťkʃscfh])', lambda m: pairs[m.group(1)]+m.group(2), sentence) # HACK h
 
-        sentence = re.sub(r'([ptťkʃscf])([|~§#]?[bdǧgzžď])', lambda m: pairs[m.group(1)]+m.group(2), sentence) # HACK h
+        sentence = re.sub(r'([ptťkʃscfh])([|~§#]?[bdǧgzžď])', lambda m: pairs[m.group(1)]+m.group(2), sentence) # HACK h
 
         return(self.fast_long_letters(sentence))
 
@@ -324,7 +338,7 @@ class PhonemeConverter():
         return(self.fast_long_letters(sentence))
 
     
-    def m_nasalization(self, sentence: str):
+    def fast_m_nasalization(self, sentence: str):
         sentence = re.sub(r'[mn][|#§~ ]?([pbfv])',r'ɱ\g<1>', sentence)
         return(self.fast_long_letters(sentence))
 

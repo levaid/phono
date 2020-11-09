@@ -8,7 +8,7 @@ sentences = []
 conv = PhonemeConverter()
 
 
-print(conv.m_nasalization('szenved'))
+print(conv.fast_m_nasalization('szenved'))
 
 
 sentences = []
