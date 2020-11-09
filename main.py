@@ -8,6 +8,9 @@ sentences = []
 conv = PhonemeConverter()
 
 
+print(conv.m_nasalization('szenved'))
+
+
 sentences = []
 batchsize = 1000
 limit = 10000 // batchsize
