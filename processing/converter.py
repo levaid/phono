@@ -269,6 +269,12 @@ class PhonemeConverter():
 
         return(self.fast_long_letters(sentence))
 
+    
+    def m_nasalization(self, sentence: str):
+        sentence = re.sub(r'[mn][|#§~ ]?([pbfv])',r'ɱ\g<1>', sentence)
+        return(self.fast_long_letters(sentence))
+
+
 
     def ipaization(self, sentence: str):
         ipa_sentence = ''
