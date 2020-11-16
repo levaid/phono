@@ -138,8 +138,8 @@ class PhonemeConverter():
 
 
     def double_letters(self, sentence: str):
-        double_long = [('ccs','Č'),('ddz','Ď'),('ddzs','Ĵ'),('ggy','Ǧ'),('lly','J'),('nny','Ɲ'),('ssz','Ʃ'),('tty','Ť'),('zzs','Ž')]
-        double = [('cs','č'),('dz','ď'),('dzs','ĵ'),('gy','ǧ'),('ly','j'),('ny','ɲ'),('sz','ʃ'),('ty','ť'),('zs','ž')]
+        double_long = [('ccs','Č'),('ddzs','Ĵ'),('ddz','Ď'),('ggy','Ǧ'),('lly','J'),('nny','Ɲ'),('ssz','Ʃ'),('tty','Ť'),('zzs','Ž')]
+        double = [('cs','č'),('dzs','ĵ'),('dz','ď'),('gy','ǧ'),('ly','j'),('ny','ɲ'),('sz','ʃ'),('ty','ť'),('zs','ž')]
         # TODO it should be aggregated in one long regex
         for old, new in double_long + double:
             sentence = sentence.replace(old, new)
@@ -155,9 +155,12 @@ class PhonemeConverter():
 
 
     def h_transformation(self, sentence: str):
+        sentence = re.sub(r'(ch$)',r'Ḧ',sentence)
         sentence = re.sub(r'([aáeéiíoóöőüűuú][|§#~ ]?)h([|§#~ ]?[aáeéiíoóöőüűuú])',r'\g<1>ɦ\g<2>',sentence) #tehén
         sentence = re.sub(r'([aáeéiíoóöőüűuú][|§#~ ]?)H([|§#~ ]?[aáeéiíoóöőüűuú])',r'\g<1>Ḧ\g<2>',sentence) #ahhoz
-        sentence = re.sub(r'([aáeéiíoóöőüűuú][|§#~]?)[c]?h([|§#~]?[bcdfgjklmnpqrstvxzčďǧɲʃťž ]?)',r'\g<1>ḧ\g<2>',sentence) ##pechből
+        sentence = re.sub(r'([aáeéiíoóöőüűuú][|§#~]?)[c]h([|§#~]?[bcdfgjklmnpqrstvxzčďǧɲʃťž ]?)',r'\g<1>ḧ\g<2>',sentence) ##pechből
+        sentence = re.sub(r'([mnɲrlj][|§#~]?)h',r'\g<1>ɦ',sentence)
+        
         return(self.long_letters(sentence))
 
 
@@ -187,11 +190,11 @@ class PhonemeConverter():
     def voice_assimilation(self, sentence: str):
         voiced = 'bdǧgzžď'
         voiceless = 'ptťkʃscf'
-        pairs = {'p':'b','b':'p','t':'d','d':'t','ť':'ǧ','ǧ':'ť','k':'g','g':'k','f':'v','v':'f','ʃ':'z','z':'ʃ','s':'ž','ž':'s','c':'ď','ď':'c','h':'ɦ'} #cs/dzs
+        pairs = {'p':'b','b':'p','t':'d','d':'t','ť':'ǧ','ǧ':'ť','k':'g','g':'k','f':'v','v':'f','ʃ':'z','z':'ʃ','s':'ž','ž':'s','c':'ď','ď':'c','h':'ɦ','č':'ĵ','ĵ':'č'} #cs/dzs
         
-        sentence = re.sub(r'([bdǧgzžďv])([|~§#]?[ptťkʃscfh])', lambda m: pairs[m.group(1)]+m.group(2), sentence) # HACK h
+        sentence = re.sub(r'([bdǧgzžďvĵ])([|~§#]?[ptťkʃscfhč])', lambda m: pairs[m.group(1)]+m.group(2), sentence) # HACK h
 
-        sentence = re.sub(r'([ptťkʃscfh])([|~§#]?[bdǧgzžď])', lambda m: pairs[m.group(1)]+m.group(2), sentence) # HACK h
+        sentence = re.sub(r'([ptťkʃscfhč])([|~§#]?[bdǧgzžďĵ])', lambda m: pairs[m.group(1)]+m.group(2), sentence) # HACK h
 
         return(self.long_letters(sentence))
 
@@ -259,13 +262,22 @@ class PhonemeConverter():
 
     def ipaization(self, sentence: str):
         ipa_sentence = ''
-        ipa = {'a':'ɒ', 'á':'aː', 'b':'b', 'c':'t͡s', 'č':'t͡ʃ', 'd':'d', 'ď':'d͡z', 'e':'ɛ', 'é':'eː', 'f':'f', 'g':'ɡ', 'ǧ':'ɟ', 'h':'h', 'i':'i', 'í':'iː', 'j':'j', 'k':'k', 'l':'l', 'ly':'j', 'm':'m', 'n':'n', 'ɲ':'ɲ', 'o':'o', 'ó':'oː', 'ö':'ø', 'ő':'øː', 'p':'p', 'q':'k', 'r':'r', 's':'ʃ', 'ʃ':'s', 't':'t', 'ť':'c', 'u':'u', 'ú':'uː', 'ü':'y', 'ű':'yː', 'v':'v', 'w':'v', 'x':'ks', 'y':'i', 'z':'z', 'ž':'ʒ', 'B':'bː', 'C':'t͡sː', 'Č':'t͡ʃː', 'D':'dː', 'Ď':'d͡zː', 'F':'fː', 'G':'ɡː', 'Ǧ':'ɟː', 'H':'hː', 'J':'jː', 'K':'kː', 'L':'lː', 'ly':'j', 'M':'mː', 'N':'nː', 'Ɲ':'ɲː', 'P':'pː', 'Q':'kː', 'R':'rː', 'S':'ʃː', 'Ʃ':'sː', 'T':'tː', 'Ť':'cː', 'V':'vː', 'W':'vː', 'X':'ksː', 'Z':'zː', 'Ž':'ʒː', 'Ḧ':'xː', 'ḧ':'x' }
-        #'dzs':'d͡ʒ',
+        ipa = {'a':'ɒ', 'á':'aː', 'b':'b', 'c':'t͡s', 'č':'t͡ʃ', 'd':'d', 'ď':'d͡z', 'e':'ɛ', 
+               'é':'eː', 'f':'f', 'g':'ɡ', 'ǧ':'ɟ', 'h':'h', 'i':'i', 'í':'iː', 'j':'j', 
+               'k':'k', 'l':'l', 'ly':'j', 'm':'m', 'n':'n', 'ɲ':'ɲ', 'o':'o', 'ó':'oː',
+               'ö':'ø', 'ő':'øː', 'p':'p', 'q':'k', 'r':'r', 's':'ʃ', 'ʃ':'s', 't':'t', 
+               'ť':'c', 'u':'u', 'ú':'uː', 'ü':'y', 'ű':'yː', 'v':'v', 'w':'v', 'x':'ks', 
+               'y':'i', 'z':'z', 'ž':'ʒ', 'B':'bː', 'C':'t͡sː', 'Č':'t͡ʃː', 'D':'dː', 'Ď':'d͡zː', 
+               'F':'fː', 'G':'ɡː', 'Ǧ':'ɟː', 'H':'hː', 'J':'jː', 'K':'kː', 'L':'lː', 'ly':'j', 
+               'M':'mː', 'N':'nː', 'Ɲ':'ɲː', 'P':'pː', 'Q':'kː', 'R':'rː', 'S':'ʃː', 'Ʃ':'sː', 
+               'T':'tː', 'Ť':'cː', 'V':'vː', 'W':'vː', 'X':'ksː', 'Z':'zː', 'Ž':'ʒː', 'Ḧ':'xː', 
+               'ḧ':'x', 'ĵ':'d͡ʒ', 'ď':'d͡z', 'Ĵ':'d͡ʒː', 'Ď':'d͡zː'}
+        #'dzs':'d͡ʒ'
         sentence = self.long_letters(re.sub(r'[|~§#]', '', sentence))
         for letter in sentence:
             ipa_sentence += ipa.get(letter, letter)
 
-        return(ipa_sentence)
+        return(ipa_sentence)    
 
 # LEGACY FUNCTIONS - HERE FOR REFERENCE
 

@@ -8,7 +8,7 @@ sentences = []
 conv = PhonemeConverter()
 
 
-print(conv.fast_m_nasalization('szenved'))
+print(conv.h_transformation('található'))
 
 
 sentences = []
